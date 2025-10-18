@@ -1,22 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Intro SE331</title>
-    <!-- Import Styles -->
-    <link rel="stylesheet" href="./assets/styles.css" />
-    <!-- Import Vue.js -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Lab 01</title>
+    <!-- 引入项目样式 -->
+    <link rel="stylesheet" href="./assets/styles.css">
 </head>
-
 <body>
     <div id="app">
-        <h1>Product goes here</h1>
+        <div class="nav-bar"></div>
+        <!-- 显示购物车数量（按商品 id 显示数量） -->
+        <div class="cart">
+            Cart:
+            <span v-if="Object.keys(cart).length === 0">(empty)</span>
+            <template v-else>
+                <span v-for="(count, id) in cart" :key="id">[ID: {{ id }} 数量: {{ count }}]&nbsp;</span>
+            </template>
+        </div>
+
+        <!-- 页面上添加一个复选框以切换 premium（用于实现 9.9 交互演示） -->
+        <div style="margin:10px 0">
+            <label>
+                <input type="checkbox" v-model="premium">
+                Premium (free shipping when checked)
+            </label>
+            <span style="margin-left:12px">Current premium: {{ premium }}</span>
+        </div>
+
+    <!-- 引入ProductDisplay组件，传递premium属性（控制运费显示） -->
+    <product-display :premium="premium" @add-to-cart="incrementCart" @remove-from-cart="decrementCart"></product-display>
     </div>
 
-    <!-- Import Js -->
+    <!-- 引入 Vue (本地全局构建)，必须在组件和主脚本之前加载 -->
+    <script src="./assets/vue.global.js"></script>
+    <!-- 脚本引入顺序：先引入组件，再引入主脚本 -->
+    <script src="./components/ProductDisplay.js"></script>
+    <script src="./components/ReviewForm.js"></script>
+    <script src="./components/ReviewList.js"></script>
     <script src="./main.js"></script>
+    <!-- debug: 检查 Vue 是否加载及 app 是否挂载 -->
+    <script>
+        try {
+            console.log('DEBUG: typeof Vue =', typeof Vue);
+            console.log('DEBUG: Vue.version =', Vue && Vue.version);
+        } catch (e) {
+            console.error('DEBUG: Vue not available:', e);
+        }
+        try {
+            const appEl = document.getElementById('app');
+            console.log('DEBUG: #app element found:', !!appEl);
+            console.log('DEBUG: #app.__vue_app__ =', appEl && appEl.__vue_app__);
+        } catch (e) {
+            console.error('DEBUG: error checking #app:', e);
+        }
+    </script>
+    <!-- quick inline test: mount a tiny Vue app to #vue-test to verify Vue works -->
+    <div id="vue-test" style="position:fixed;right:12px;bottom:12px;background:#fff;padding:8px;border:1px solid #ddd;">Test area (no Vue)</div>
+    <script>
+        try {
+            const testApp = Vue.createApp({
+                data() { return { testMsg: 'Vue mounted' } }
+            });
+            testApp.mount('#vue-test');
+            console.log('DEBUG: test Vue app mounted to #vue-test');
+        } catch (e) {
+            console.error('DEBUG: failed to mount test Vue app', e);
+        }
+    </script>
 </body>
-
 </html>
